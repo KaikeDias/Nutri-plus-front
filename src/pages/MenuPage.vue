@@ -5,6 +5,10 @@ function onCardClick() {
 </script>
 
 <template>
+  <div class="title q-ma-md text-weight-bold text-black text-h5 q-pa-md text-center">
+    Nome do Paciente
+  </div>
+
   <div class="q-app q-pa-lg q-gutter-y-lg" style="min-height: 100vh">
     <q-card elevated clickable class="cursor-pointer q-pa-md" @click="onCardClick">
       <q-card-section class="row justify-between items-center">
@@ -57,3 +61,10 @@ function onCardClick() {
     </q-card>
   </div>
 </template>
+
+<style scoped>
+.title {
+  background-color: #cde7eb;
+  border-radius: 50px;
+}
+</style>
