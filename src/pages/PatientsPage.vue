@@ -10,8 +10,8 @@ interface Row {
 interface Column {
   name: string
   label: string
-  align: 'left' | 'center' | 'right' 
-  field: string | ((row: Row) => string | number) 
+  align: 'left' | 'center' | 'right'
+  field: string | ((row: Row) => string | number)
 }
 
 const rows: Row[] = [
@@ -30,20 +30,20 @@ const columns: Column[] = [
   {
     name: 'name',
     label: 'Nome Completo',
-    align: 'left', 
+    align: 'left',
     field: (row: Row) => row.name,
   },
   {
     name: 'email',
     label: 'Email',
-    align: 'left', 
+    align: 'left',
     field: (row: Row) => row.email,
   },
   {
     name: 'actions',
     label: 'Ações',
-    align: 'center', 
-    field: 'actions', 
+    align: 'center',
+    field: 'actions',
   },
 ]
 
@@ -70,45 +70,29 @@ const confirmPassword = ref<string>()
 
 <template>
   <div id="q-app" style="min-height: 100vh">
-    <div class="title q-ma-md text-weight-bold text-black text-h5 q-pa-md text-center" >Pacientes</div>
+    <div class="title q-ma-md text-weight-bold text-black text-h5 q-pa-md text-center">Pacientes</div>
 
     <div class="q-pa-md">
-      <q-btn
-        color="primary"
-        icon="add"
-        label="Novo Paciente"
-        class="q-mb-md"
-        rounded
-        @click="addDialog = true"
-      />
+      <q-btn color="primary" icon="add" label="Novo Paciente" class="q-mb-md" rounded @click="addDialog = true" />
 
       <q-table title="Pacientes" :rows="rows" :columns="columns" row-key="name">
         <template v-slot:body-cell-actions="props">
           <q-td :props="props" class="gap-">
-            <q-btn
-              class="bg-primary q-mr-sm"
-              color="white"
-              icon="grid_view"
-              @click="onDelete(props.row)"
-              flat
-              round
-            />
-            <q-btn
-              class="bg-primary q-mr-sm"
-              color="white"
-              icon="mode_edit"
-              @click="onEdit(props.row)"
-              flat
-              round
-            />
-            <q-btn
-              class="bg-primary"
-              color="white"
-              icon="delete"
-              @click="onDelete(props.row)"
-              flat
-              round
-            />
+            <q-btn class="bg-primary q-mr-sm" color="white" icon="grid_view" @click="onDelete(props.row)" flat round>
+              <q-tooltip>
+                Menu do Paciente
+              </q-tooltip>
+            </q-btn>
+            <q-btn class="bg-primary q-mr-sm" color="white" icon="mode_edit" @click="onEdit(props.row)" flat round>
+              <q-tooltip>
+                Editar Paciente
+              </q-tooltip>
+            </q-btn>
+            <q-btn class="bg-primary" color="white" icon="delete" @click="onDelete(props.row)" flat round>
+              <q-tooltip>
+                Deletar Paciente
+              </q-tooltip>
+            </q-btn>
           </q-td>
         </template>
       </q-table>
@@ -170,10 +154,8 @@ const confirmPassword = ref<string>()
 </template>
 
 <style scoped>
-
 .title {
   background-color: #CDE7EB;
   border-radius: 50px;
 }
-
 </style>
