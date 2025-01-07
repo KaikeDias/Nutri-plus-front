@@ -10,8 +10,8 @@ interface Row {
 interface Column {
   name: string
   label: string
-  align: 'left' | 'center' | 'right' // Corrigido para aceitar apenas os valores possíveis
-  field: string | ((row: Row) => string | number) // 'field' pode ser uma string ou uma função
+  align: 'left' | 'center' | 'right' 
+  field: string | ((row: Row) => string | number) 
 }
 
 const rows: Row[] = [
@@ -30,20 +30,20 @@ const columns: Column[] = [
   {
     name: 'name',
     label: 'Nome Completo',
-    align: 'left', // Corrigido para "left", "center" ou "right"
+    align: 'left', 
     field: (row: Row) => row.name,
   },
   {
     name: 'email',
     label: 'Email',
-    align: 'left', // Corrigido para "left", "center" ou "right"
+    align: 'left', 
     field: (row: Row) => row.email,
   },
   {
     name: 'actions',
     label: 'Ações',
-    align: 'center', // Corrigido para "left", "center" ou "right"
-    field: 'actions', // Essa coluna usará ícones de ação, como edit e delete
+    align: 'center', 
+    field: 'actions', 
   },
 ]
 
