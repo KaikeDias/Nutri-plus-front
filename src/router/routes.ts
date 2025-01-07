@@ -9,6 +9,7 @@ const routes: RouteRecordRaw[] = [
       {path: 'patients', component: () => import('pages/PatientsPage.vue')},
       {path: 'meals', component: () => import('pages/MealsPage.vue')},
       {path: 'guidelines', component: () => import('pages/GuidelinesPage.vue')},
+      {path: 'documents', component: () => import('pages/DocumentsPage.vue')},
     ]
   },
 
