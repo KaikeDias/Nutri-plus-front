@@ -1,16 +1,19 @@
+import { useAuthStore } from 'src/stores/authStore';
 import type { RouteRecordRaw } from 'vue-router';
+import { createRouter, createWebHistory } from 'vue-router'
 
 const routes: RouteRecordRaw[] = [
   {
     path: '/',
     component: () => import('layouts/MainLayout.vue'),
+    meta: { requiresAuth: true },
     children: [
       {path: '', component: () => import('pages/MenuPage.vue')},
       {path: 'patients', component: () => import('pages/PatientsPage.vue')},
       {path: 'meals', component: () => import('pages/MealsPage.vue')},
       {path: 'guidelines', component: () => import('pages/GuidelinesPage.vue')},
       {path: 'documents', component: () => import('pages/DocumentsPage.vue')},
-    ]
+    ],
   },
   {
     path: '/login',
@@ -28,5 +31,22 @@ const routes: RouteRecordRaw[] = [
     component: () => import('pages/ErrorNotFound.vue'),
   },
 ];
+
+const router = createRouter({
+  history: createWebHistory(),
+  routes
+})
+
+// Proteção de rotas
+router.beforeEach((to, from, next) => {
+  const authStore = useAuthStore()
+  authStore.loadToken() // Garante que o token é carregado
+
+  if (to.meta.requiresAuth && !authStore.token) {
+    next('/login')
+  } else {
+    next()
+  }
+})
 
 export default routes;
