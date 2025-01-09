@@ -1,12 +1,10 @@
 import { defineStore } from "pinia"
 import { api } from "src/boot/axios"
-// import type RegisterNutritionistDTO from "src/models/dtos/RegisterNutritionistDTO"
+import type RegisterNutritionistDTO from "src/models/dtos/registerNutritionistDTO"
 
 interface LoginResponse {
     token: string
 }
-
-
 
 export const useAuthStore = defineStore('auth', {
     state: () => ({
@@ -14,17 +12,9 @@ export const useAuthStore = defineStore('auth', {
     }),
 
     actions: {
-        async registerNutritionist(username: string, email: string, password: string, name: string, phone: string, cpf: string, crn: string) {
+        async registerNutritionist(data: RegisterNutritionistDTO) {
             try {
-                await api.post('/nutritionists/register', {
-                    username,
-                    email,
-                    password,
-                    name,
-                    phone,
-                    cpf,
-                    crn
-                })
+                await api.post('/nutritionists/register', data)
             } catch (error) {
                 console.error('Erro no login:', error);
                 throw new Error('Erro no cadastro');

@@ -3,6 +3,7 @@ import { ref } from 'vue'
 import logo from 'assets/logo.png'
 import { useAuthStore } from 'src/stores/authStore'
 import { useRouter } from 'vue-router'
+import type RegisterNutritionistDTO from "src/models/dtos/registerNutritionistDTO"
 
 const authStore = useAuthStore()
 const router = useRouter()
@@ -34,17 +35,20 @@ const handleRegister = async () => {
   errorMessage.value = null
   loading.value = true
 
+
   try {
     if (validatePassword(password.value, confirmPassword.value)) {
-      await authStore.registerNutritionist(
-        username.value,
-        email.value,
-        password.value,
-        name.value,
-        phone.value,
-        cpf.value,
-        crn.value,
-      )
+      const registerData: RegisterNutritionistDTO = {
+        username: username.value,
+        email: email.value,
+        password: password.value,
+        name: name.value,
+        phone: phone.value,
+        cpf: cpf.value,
+        crn: crn.value
+      }
+
+      await authStore.registerNutritionist(registerData)
 
       router.push('/login')
     } else {
@@ -67,27 +71,14 @@ const handleRegister = async () => {
         </div>
         <q-form @submit.prevent="handleRegister">
           <div class="row q-gutter-x-md">
-            <q-input
-              outlined
-              class="q-mb-sm"
-              style="min-width: 350px"
-              v-model="name"
-              label="Nome completo"
-              :rules="[(val) => !!val || emptyFieldErrorMessage]"
-            >
+            <q-input outlined class="q-mb-sm" style="min-width: 350px" v-model="name" label="Nome completo"
+              :rules="[(val) => !!val || emptyFieldErrorMessage]">
               <template v-slot:prepend>
                 <q-icon name="person" />
               </template>
             </q-input>
-            <q-input
-              outlined
-              class="q-mb-sm"
-              style="min-width: 350px"
-              v-model="phone"
-              :mask="phoneMask"
-              label="Fone/Celular"
-              :rules="[(val) => !!val || emptyFieldErrorMessage]"
-            >
+            <q-input outlined class="q-mb-sm" style="min-width: 350px" v-model="phone" :mask="phoneMask"
+              label="Celular" :rules="[(val) => !!val || emptyFieldErrorMessage]">
               <template v-slot:prepend>
                 <q-icon name="phone" />
               </template>
@@ -95,105 +86,56 @@ const handleRegister = async () => {
           </div>
 
           <div class="row q-gutter-x-md">
-            <q-input
-              outlined
-              class="q-mb-sm"
-              style="min-width: 350px"
-              v-model="cpf"
-              label="CPF"
-              :mask="cpfMask"
-              :rules="[(val) => !!val || emptyFieldErrorMessage]"
-            >
+            <q-input outlined class="q-mb-sm" style="min-width: 350px" v-model="cpf" label="CPF" :mask="cpfMask"
+              :rules="[(val) => !!val || emptyFieldErrorMessage]">
               <template v-slot:prepend>
                 <q-icon name="badge" />
               </template>
             </q-input>
-            <q-input
-              outlined
-              class="q-mb-sm"
-              style="min-width: 350px"
-              v-model="crn"
-              label="CRN"
-              :rules="[(val) => !!val || emptyFieldErrorMessage]"
-            >
+            <q-input outlined class="q-mb-sm" style="min-width: 350px" v-model="crn" label="CRN"
+              :rules="[(val) => !!val || emptyFieldErrorMessage]">
               <template v-slot:prepend>
                 <q-icon name="badge" />
               </template>
             </q-input>
           </div>
-          <q-input
-            outlined
-            class="q-mb-sm"
-            style="min-width: 350px"
-            v-model="username"
-            label="Username"
-            :rules="[(val) => !!val || emptyFieldErrorMessage]"
-          >
+          <q-input outlined class="q-mb-sm" style="min-width: 350px" v-model="username" label="Nome de usuário"
+            :rules="[(val) => !!val || emptyFieldErrorMessage]">
             <template v-slot:prepend>
               <q-icon name="person" />
             </template>
           </q-input>
 
-          <q-input
-            outlined
-            class="q-mb-sm"
-            style="min-width: 350px"
-            v-model="email"
-            label="Email"
-            :rules="[(val) => !!val || emptyFieldErrorMessage]"
-          >
+          <q-input outlined class="q-mb-sm" style="min-width: 350px" v-model="email" label="Email"
+            :rules="[(val) => !!val || emptyFieldErrorMessage]">
             <template v-slot:prepend>
               <q-icon name="email" />
             </template>
           </q-input>
 
-          <q-input
-            outlined
-            class="q-mb-sm"
-            v-model="password"
-            :type="isPwd ? 'password' : 'text'"
-            label="Senha"
-            :rules="[(val) => !!val || emptyFieldErrorMessage]"
-          >
+          <q-input outlined class="q-mb-sm" v-model="password" :type="isPwd ? 'password' : 'text'" label="Senha"
+            :rules="[(val) => !!val || emptyFieldErrorMessage]">
             <template v-slot:prepend>
               <q-icon name="lock" />
             </template>
             <template v-slot:append>
-              <q-icon
-                :name="isPwd ? 'visibility_off' : 'visibility'"
-                class="cursor-pointer"
-                @click="isPwd = !isPwd"
-              />
+              <q-icon :name="isPwd ? 'visibility_off' : 'visibility'" class="cursor-pointer" @click="isPwd = !isPwd" />
             </template>
           </q-input>
 
-          <q-input
-            outlined
-            class="q-mb-md"
-            v-model="confirmPassword"
-            label="Confirmar Senha"
-            :type="isCPwd ? 'password' : 'text'"
-            :rules="[(val) => !!val || emptyFieldErrorMessage]"
-          >
+          <q-input outlined class="q-mb-md" v-model="confirmPassword" label="Confirmar Senha"
+            :type="isCPwd ? 'password' : 'text'" :rules="[(val) => !!val || emptyFieldErrorMessage]">
             <template v-slot:prepend>
               <q-icon name="lock" />
             </template>
             <template v-slot:append>
-              <q-icon
-                :name="isCPwd ? 'visibility_off' : 'visibility'"
-                class="cursor-pointer"
-                @click="isCPwd = !isCPwd"
-              />
+              <q-icon :name="isCPwd ? 'visibility_off' : 'visibility'" class="cursor-pointer"
+                @click="isCPwd = !isCPwd" />
             </template>
           </q-input>
           <div class="row justify-center">
-            <q-btn
-              color="primary"
-              style="height: 50px; min-width: 250px; border-radius: 10px"
-              label="Cadastrar-se"
-              :loading="loading"
-              type="submit"
-            />
+            <q-btn color="primary" style="height: 50px; min-width: 250px; border-radius: 10px" label="Cadastrar-se"
+              :loading="loading" type="submit" />
           </div>
         </q-form>
       </q-card-section>
