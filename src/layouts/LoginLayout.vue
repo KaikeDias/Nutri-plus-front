@@ -39,7 +39,7 @@ const login = async () => {
           <q-input
             outlined
             v-model="username"
-            label="Username"
+            label="Nome de usuário"
             class="q-mb-md"
             style="min-width: 350px"
           >
