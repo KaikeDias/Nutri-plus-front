@@ -8,19 +8,19 @@
       </q-toolbar>
     </q-header>
 
-    <q-drawer
-      v-model="leftDrawerOpen"
-      show-if-above
-      none
-      class="bg-primary"
-    >
+    <q-drawer v-model="leftDrawerOpen" show-if-above none class="bg-primary">
       <q-list>
         <DrawerItem v-for="link in linksList" :key="link.title" v-bind="link" class="text-white" />
       </q-list>
 
       <q-item class="col-grown"> </q-item>
 
-      <DrawerItem :key="logout.title" v-bind="logout" class="text-white fixed-bottom" />
+      <DrawerItem
+        :key="logout.title"
+        v-bind="logout"
+        class="text-white fixed-bottom"
+        @click="handleLogout"
+      />
     </q-drawer>
 
     <q-page-container>
@@ -32,6 +32,11 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import DrawerItem, { type DrawerItemProps } from 'src/components/DrawerItem.vue'
+import { useAuthStore } from 'src/stores/authStore'
+import { useRouter } from 'vue-router'
+
+const authStore = useAuthStore()
+const router = useRouter()
 
 const linksList: DrawerItemProps[] = [
   {
@@ -44,14 +49,19 @@ const linksList: DrawerItemProps[] = [
   },
 ]
 
+const leftDrawerOpen = ref(false)
+
+function toggleLeftDrawer() {
+  leftDrawerOpen.value = !leftDrawerOpen.value
+}
+
 const logout: DrawerItemProps = {
   title: 'Sair',
   icon: 'logout',
 }
 
-const leftDrawerOpen = ref(false)
-
-function toggleLeftDrawer() {
-  leftDrawerOpen.value = !leftDrawerOpen.value
+function handleLogout() {
+  authStore.logout()
+  router.push('/login')
 }
 </script>
