@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
 import type CreatePatientDTO from 'src/models/dtos/createPatientDTO'
+import type Patient from 'src/models/patient'
 import { usePatientStore } from 'src/stores/patientStore'
 import { onMounted, ref } from 'vue'
 
@@ -14,19 +15,11 @@ onMounted(() => {
   patientStore.fetchPatients()
 })
 
-interface Row {
-  name: string
-  username: string
-  email: string
-  cpf: string
-  phone: string
-}
-
 interface Column {
   name: string
   label: string
   align: 'left' | 'center' | 'right'
-  field: string | ((row: Row) => string | number)
+  field: string | ((row: Patient) => string | number)
 }
 
 const columns: Column[] = [
@@ -34,31 +27,31 @@ const columns: Column[] = [
     name: 'name',
     label: 'Nome Completo',
     align: 'left',
-    field: (row: Row) => row.name,
+    field: (row: Patient) => row.name,
   },
   {
     name: 'username',
     label: 'Usuário',
     align: 'left',
-    field: (row: Row) => row.username,
+    field: (row: Patient) => row.username,
   },
   {
     name: 'cpf',
     label: 'CPF',
     align: 'left',
-    field: (row: Row) => row.cpf,
+    field: (row: Patient) => row.cpf,
   },
   {
     name: 'phone',
     label: 'Celular',
     align: 'left',
-    field: (row: Row) => row.phone,
+    field: (row: Patient) => row.phone,
   },
   {
     name: 'email',
     label: 'Email',
     align: 'left',
-    field: (row: Row) => row.email,
+    field: (row: Patient) => row.email,
   },
   {
     name: 'actions',
@@ -68,16 +61,12 @@ const columns: Column[] = [
   },
 ]
 
-function onEdit(row: Row) {
+function onEdit(row: Patient) {
   console.log('Editando:', row)
 }
 
-function onDelete(row: Row) {
-  console.log('Deletando:', row)
-}
-
 const addDialog = ref(false)
-const loading = ref(false)
+const addLoading = ref(false)
 const errorMessage = ref<string | null>(null)
 
 const patient = ref<CreatePatientDTO>({
@@ -97,7 +86,7 @@ function validatePassword(password: string, confirmPassword: string): boolean {
 
 const handleRegisterPatient = async () => {
   errorMessage.value = null
-  loading.value = true
+  addLoading.value = true
 
   try {
     if (validatePassword(patient.value.password, confirmPassword.value)) {
@@ -110,7 +99,35 @@ const handleRegisterPatient = async () => {
   } catch (error) {
     errorMessage.value = (error as Error).message
   } finally {
-    loading.value = false
+    addLoading.value = false
+  }
+}
+
+const deleteDialog = ref(false)
+const deleteLoading = ref(false)
+const deleteErrorMessage = ref<string | null>(null)
+
+const selectedPatient = ref<Patient | null>(null);
+
+const openDeleteDialog = (patientDelete: Patient) => {
+  deleteDialog.value = true
+  selectedPatient.value = patientDelete
+}
+
+const onDelete = async (id: string) => {
+  if (!selectedPatient.value) return 
+  deleteErrorMessage.value = null
+  deleteLoading.value = true
+
+  try {
+    console.log(id)
+    await patientStore.deletePatient(id)
+    await patientStore.fetchPatients()
+    deleteDialog.value = false
+  } catch (error) {
+    deleteErrorMessage.value = (error as Error).message
+  } finally {
+    deleteLoading.value = false
   }
 }
 </script>
@@ -158,7 +175,7 @@ const handleRegisterPatient = async () => {
               class="bg-primary"
               color="white"
               icon="delete"
-              @click="onDelete(props.row)"
+              @click="openDeleteDialog(props.row)"
               flat
               round
             >
@@ -227,11 +244,33 @@ const handleRegisterPatient = async () => {
               class="bg-primary text-white"
               flat
               label="Salvar"
-              :loading="loading"
+              :loading="addLoading"
               type="submit"
             />
           </q-card-actions>
         </q-form>
+      </q-card>
+    </q-dialog>
+
+    <q-dialog v-model="deleteDialog" persistent>
+      <q-card style="width: 500px; max-width: 80vw">
+        <q-card-section class="row justify-center">
+          <div class="text-h6 text-weight-bold">Tem certeza que deseja excluir este paciente?</div>
+        </q-card-section>
+
+        <hr />
+
+        <q-card-actions align="around">
+          <q-btn square label="Cancelar" v-close-popup class="bg-primary text-white" />
+          <q-btn
+            class="bg-negative text-white"
+            flat
+            label="Deletar"
+            icon="delete"
+            :loading="deleteLoading"
+            @click="onDelete(selectedPatient!.id)"
+          />
+        </q-card-actions>
       </q-card>
     </q-dialog>
   </div>
