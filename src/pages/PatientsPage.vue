@@ -1,6 +1,15 @@
 <script setup lang="ts">
-import type Patient from 'src/models/Patient'
-import { ref } from 'vue'
+import { storeToRefs } from 'pinia';
+import type CreatePatientDTO from 'src/models/dtos/createPatientDTO';
+import { usePatientStore } from 'src/stores/patientStore'
+import { onMounted, ref } from 'vue'
+
+const patientStore = usePatientStore();
+const {patients} = storeToRefs(patientStore);
+
+onMounted(() => {
+  patientStore.fetchPatients();
+})
 
 interface Row {
   name: string
@@ -13,18 +22,6 @@ interface Column {
   align: 'left' | 'center' | 'right'
   field: string | ((row: Row) => string | number)
 }
-
-const rows: Row[] = [
-  { name: 'Joao', email: 'joao@email.com' },
-  { name: 'Lucas', email: 'lucas@email.com' },
-  { name: 'Ana', email: 'ana@email.com' },
-  { name: 'Carlos', email: 'carlos@email.com' },
-  { name: 'Maria', email: 'maria@email.com' },
-  { name: 'Maria', email: 'maria@email.com' },
-  { name: 'Maria', email: 'maria@email.com' },
-  { name: 'Maria', email: 'maria@email.com' },
-  { name: 'Maria', email: 'maria@email.com' },
-]
 
 const columns: Column[] = [
   {
@@ -57,7 +54,7 @@ function onDelete(row: Row) {
 
 const addDialog = ref(false)
 
-const patient = ref<Patient>({
+const patient = ref<CreatePatientDTO>({
   fullName: '',
   cpf: '',
   phone: '',
@@ -65,7 +62,13 @@ const patient = ref<Patient>({
   email: '',
   password: '',
 })
+
 const confirmPassword = ref<string>()
+
+// function validatePassword(password: string, confirmPassword: string): boolean {
+//   return password === confirmPassword
+// }
+
 </script>
 
 <template>
@@ -75,7 +78,7 @@ const confirmPassword = ref<string>()
     <div class="q-pa-md">
       <q-btn color="primary" icon="add" label="Novo Paciente" class="q-mb-md" rounded @click="addDialog = true" />
 
-      <q-table title="Pacientes" :rows="rows" :columns="columns" row-key="name">
+      <q-table title="Pacientes" :rows="patients" :columns="columns" row-key="name">
         <template v-slot:body-cell-actions="props">
           <q-td :props="props" class="gap-">
             <q-btn class="bg-primary q-mr-sm" color="white" icon="grid_view" @click="onDelete(props.row)" flat round>
