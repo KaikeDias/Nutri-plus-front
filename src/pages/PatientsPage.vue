@@ -2,6 +2,7 @@
 import { storeToRefs } from 'pinia'
 import type CreatePatientDTO from 'src/models/dtos/createPatientDTO'
 import type Patient from 'src/models/patient'
+// import type EditPatientDTO from 'src/models/dtos/editPatientDTO'
 import { usePatientStore } from 'src/stores/patientStore'
 import { onMounted, ref } from 'vue'
 
@@ -61,9 +62,6 @@ const columns: Column[] = [
   },
 ]
 
-function onEdit(row: Patient) {
-  console.log('Editando:', row)
-}
 
 const addDialog = ref(false)
 const addLoading = ref(false)
@@ -118,9 +116,8 @@ const onDelete = async (id: string) => {
   if (!selectedPatient.value) return 
   deleteErrorMessage.value = null
   deleteLoading.value = true
-
+  
   try {
-    console.log(id)
     await patientStore.deletePatient(id)
     await patientStore.fetchPatients()
     deleteDialog.value = false
@@ -130,6 +127,37 @@ const onDelete = async (id: string) => {
     deleteLoading.value = false
   }
 }
+
+const editDialog = ref(false)
+const editLoading = ref(false)
+const editErrorMessage = ref<string | null>(null)
+
+const selectedEditPatient = ref<Patient | null>(null);
+
+const openEditDialog = (patientEdit: Patient) => {
+  editDialog.value = true;
+  selectedEditPatient.value = { ...patientEdit }
+}
+
+const handleEditPatient = async (evt: Event) => {
+  evt.preventDefault(); 
+  editErrorMessage.value = null;
+  editLoading.value = true;
+
+  try {
+    if (selectedEditPatient.value) {
+      await patientStore.editPatient(selectedEditPatient.value);
+      await patientStore.fetchPatients();
+      editDialog.value = false;
+    }
+  } catch (error) {
+    editErrorMessage.value = (error as Error).message;
+  } finally {
+    editLoading.value = false;
+  }
+};
+
+
 </script>
 
 <template>
@@ -165,7 +193,7 @@ const onDelete = async (id: string) => {
               class="bg-primary q-mr-sm"
               color="white"
               icon="mode_edit"
-              @click="onEdit(props.row)"
+              @click="openEditDialog(props.row)"
               flat
               round
             >
@@ -245,6 +273,57 @@ const onDelete = async (id: string) => {
               flat
               label="Salvar"
               :loading="addLoading"
+              type="submit"
+            />
+          </q-card-actions>
+        </q-form>
+      </q-card>
+    </q-dialog>
+
+    <q-dialog v-model="editDialog" persistent>
+      <q-card style="width: 700px; max-width: 80vw">
+        <q-form @submit.prevent="handleEditPatient">
+          <q-card-section class="row justify-center">
+            <div class="text-h5 text-weight-bold">Editar Paciente</div>
+          </q-card-section>
+
+          <hr />
+
+          <q-card-section class="q-pt-none q-gutter-y-md">
+            <q-input outlined v-model="selectedEditPatient!.name" label="Nome Completo" class="q-mt-lg">
+              <template v-slot:prepend>
+                <q-icon name="person" />
+              </template>
+            </q-input>
+            <q-input outlined v-model="selectedEditPatient!.cpf" :mask="cpfMask" label="CPF">
+              <template v-slot:prepend>
+                <q-icon name="badge" />
+              </template>
+            </q-input>
+            <q-input outlined v-model="selectedEditPatient!.phone" :mask="phoneMask" label="Celular">
+              <template v-slot:prepend>
+                <q-icon name="smartphone" />
+              </template>
+            </q-input>
+            <q-input outlined v-model="selectedEditPatient!.username" label="Nome de Usuário">
+              <template v-slot:prepend>
+                <q-icon name="person" />
+              </template>
+            </q-input>
+            <q-input outlined v-model="selectedEditPatient!.email" label="Email">
+              <template v-slot:prepend>
+                <q-icon name="mail" />
+              </template>
+            </q-input>
+          </q-card-section>
+
+          <q-card-actions align="between">
+            <q-btn square label="Cancelar" v-close-popup class="bg-negative text-white" />
+            <q-btn
+              class="bg-primary text-white"
+              flat
+              label="Salvar"
+              :loading="editLoading"
               type="submit"
             />
           </q-card-actions>

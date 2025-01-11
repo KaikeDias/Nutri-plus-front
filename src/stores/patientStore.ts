@@ -35,14 +35,23 @@ export const usePatientStore = defineStore('patient', () => {
         }
     }
 
+    const editPatient = async (data: Patient) => {
+        try {
+            await api.put('/nutritionists/patients', data)
+        } catch (error) {
+            console.error('Erro ao editar paciente:', error)
+            throw new Error('Erro na edicao de paciente');
+        }
+    }
+
     const deletePatient = async (id: string) => {
         try {
             await api.delete(`/nutritionists/patients/${id}`)
         } catch (error) {
             console.error('Erro ao deletar paciente:', error)
-            throw new Error('Erro no cadastro de paciente');
+            throw new Error('Erro na delecao de paciente');
         }
     }
 
-    return { patients, fetchPatients, createPatient, deletePatient }
+    return { patients, fetchPatients, createPatient, deletePatient, editPatient }
 })
