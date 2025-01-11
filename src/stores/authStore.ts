@@ -29,7 +29,8 @@ export const useAuthStore = defineStore('auth', {
                 });
 
                 this.token = response.data.token;
-
+                localStorage.setItem('token', this.token);
+                
                 console.log('Token recebido:', this.token)
             } catch (error) {
                 console.error('Erro no login:', error)
