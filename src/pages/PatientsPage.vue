@@ -1,19 +1,25 @@
 <script setup lang="ts">
-import { storeToRefs } from 'pinia';
-import type CreatePatientDTO from 'src/models/dtos/createPatientDTO';
+import { storeToRefs } from 'pinia'
+import type CreatePatientDTO from 'src/models/dtos/createPatientDTO'
 import { usePatientStore } from 'src/stores/patientStore'
 import { onMounted, ref } from 'vue'
 
-const patientStore = usePatientStore();
-const {patients} = storeToRefs(patientStore);
+const phoneMask = ref('(##) #####-####')
+const cpfMask = ref('###.###.###-##')
+
+const patientStore = usePatientStore()
+const { patients } = storeToRefs(patientStore)
 
 onMounted(() => {
-  patientStore.fetchPatients();
+  patientStore.fetchPatients()
 })
 
 interface Row {
   name: string
+  username: string
   email: string
+  cpf: string
+  phone: string
 }
 
 interface Column {
@@ -29,6 +35,24 @@ const columns: Column[] = [
     label: 'Nome Completo',
     align: 'left',
     field: (row: Row) => row.name,
+  },
+  {
+    name: 'username',
+    label: 'Usuário',
+    align: 'left',
+    field: (row: Row) => row.username,
+  },
+  {
+    name: 'cpf',
+    label: 'CPF',
+    align: 'left',
+    field: (row: Row) => row.cpf,
+  },
+  {
+    name: 'phone',
+    label: 'Celular',
+    align: 'left',
+    field: (row: Row) => row.phone,
   },
   {
     name: 'email',
@@ -53,9 +77,11 @@ function onDelete(row: Row) {
 }
 
 const addDialog = ref(false)
+const loading = ref(false)
+const errorMessage = ref<string | null>(null)
 
 const patient = ref<CreatePatientDTO>({
-  fullName: '',
+  name: '',
   cpf: '',
   phone: '',
   username: '',
@@ -63,38 +89,80 @@ const patient = ref<CreatePatientDTO>({
   password: '',
 })
 
-const confirmPassword = ref<string>()
+const confirmPassword = ref<string>('')
 
-// function validatePassword(password: string, confirmPassword: string): boolean {
-//   return password === confirmPassword
-// }
+function validatePassword(password: string, confirmPassword: string): boolean {
+  return password === confirmPassword
+}
 
+const handleRegisterPatient = async () => {
+  errorMessage.value = null
+  loading.value = true
+
+  try {
+    if (validatePassword(patient.value.password, confirmPassword.value)) {
+      await patientStore.createPatient(patient.value)
+      addDialog.value = false
+      await patientStore.fetchPatients()
+    } else {
+      throw new Error('as senhas sao diferentes')
+    }
+  } catch (error) {
+    errorMessage.value = (error as Error).message
+  } finally {
+    loading.value = false
+  }
+}
 </script>
 
 <template>
   <div id="q-app" style="min-height: 100vh">
-    <div class="title q-ma-md text-weight-bold text-black text-h5 q-pa-md text-center">Pacientes</div>
+    <div class="title q-ma-md text-weight-bold text-black text-h5 q-pa-md text-center">
+      Pacientes
+    </div>
 
     <div class="q-pa-md">
-      <q-btn color="primary" icon="add" label="Novo Paciente" class="q-mb-md" rounded @click="addDialog = true" />
+      <q-btn
+        color="primary"
+        icon="add"
+        label="Novo Paciente"
+        class="q-mb-md"
+        rounded
+        @click="addDialog = true"
+      />
 
       <q-table title="Pacientes" :rows="patients" :columns="columns" row-key="name">
         <template v-slot:body-cell-actions="props">
           <q-td :props="props" class="gap-">
-            <q-btn class="bg-primary q-mr-sm" color="white" icon="grid_view" @click="onDelete(props.row)" flat round>
-              <q-tooltip>
-                Menu do Paciente
-              </q-tooltip>
+            <q-btn
+              class="bg-primary q-mr-sm"
+              color="white"
+              icon="grid_view"
+              @click="onDelete(props.row)"
+              flat
+              round
+            >
+              <q-tooltip> Menu do Paciente </q-tooltip>
             </q-btn>
-            <q-btn class="bg-primary q-mr-sm" color="white" icon="mode_edit" @click="onEdit(props.row)" flat round>
-              <q-tooltip>
-                Editar Paciente
-              </q-tooltip>
+            <q-btn
+              class="bg-primary q-mr-sm"
+              color="white"
+              icon="mode_edit"
+              @click="onEdit(props.row)"
+              flat
+              round
+            >
+              <q-tooltip> Editar Paciente </q-tooltip>
             </q-btn>
-            <q-btn class="bg-primary" color="white" icon="delete" @click="onDelete(props.row)" flat round>
-              <q-tooltip>
-                Deletar Paciente
-              </q-tooltip>
+            <q-btn
+              class="bg-primary"
+              color="white"
+              icon="delete"
+              @click="onDelete(props.row)"
+              flat
+              round
+            >
+              <q-tooltip> Deletar Paciente </q-tooltip>
             </q-btn>
           </q-td>
         </template>
@@ -103,54 +171,67 @@ const confirmPassword = ref<string>()
 
     <q-dialog v-model="addDialog" persistent>
       <q-card style="width: 700px; max-width: 80vw">
-        <q-card-section class="row justify-center">
-          <div class="text-h5 text-weight-bold">Adicionar Paciente</div>
-        </q-card-section>
+        <q-form @submit.prevent="handleRegisterPatient">
+          <q-card-section class="row justify-center">
+            <div class="text-h5 text-weight-bold">Adicionar Paciente</div>
+          </q-card-section>
 
-        <hr />
+          <hr />
 
-        <q-card-section class="q-pt-none q-gutter-y-md">
-          <q-input outlined v-model="patient.fullName" label="Nome Completo" class="q-mt-lg">
-            <template v-slot:prepend>
-              <q-icon name="person" />
-            </template>
-          </q-input>
-          <q-input outlined v-model="patient.cpf" label="CPF">
-            <template v-slot:prepend>
-              <q-icon name="badge" />
-            </template>
-          </q-input>
-          <q-input outlined v-model="patient.phone" label="Telefone">
-            <template v-slot:prepend>
-              <q-icon name="smartphone" />
-            </template>
-          </q-input>
-          <q-input outlined v-model="patient.username" label="Nome de Usuário">
-            <template v-slot:prepend>
-              <q-icon name="person" />
-            </template>
-          </q-input>
-          <q-input outlined v-model="patient.email" label="Email">
-            <template v-slot:prepend>
-              <q-icon name="mail" />
-            </template>
-          </q-input>
-          <q-input outlined v-model="patient.password" label="Senha">
-            <template v-slot:prepend>
-              <q-icon name="lock" />
-            </template>
-          </q-input>
-          <q-input outlined v-model="confirmPassword" label="Confirmação de Senha">
-            <template v-slot:prepend>
-              <q-icon name="lock" />
-            </template>
-          </q-input>
-        </q-card-section>
+          <q-card-section class="q-pt-none q-gutter-y-md">
+            <q-input outlined v-model="patient.name" label="Nome Completo" class="q-mt-lg">
+              <template v-slot:prepend>
+                <q-icon name="person" />
+              </template>
+            </q-input>
+            <q-input outlined v-model="patient.cpf" :mask="cpfMask" label="CPF">
+              <template v-slot:prepend>
+                <q-icon name="badge" />
+              </template>
+            </q-input>
+            <q-input outlined v-model="patient.phone" :mask="phoneMask" label="Celular">
+              <template v-slot:prepend>
+                <q-icon name="smartphone" />
+              </template>
+            </q-input>
+            <q-input outlined v-model="patient.username" label="Nome de Usuário">
+              <template v-slot:prepend>
+                <q-icon name="person" />
+              </template>
+            </q-input>
+            <q-input outlined v-model="patient.email" label="Email">
+              <template v-slot:prepend>
+                <q-icon name="mail" />
+              </template>
+            </q-input>
+            <q-input outlined type="password" v-model="patient.password" label="Senha">
+              <template v-slot:prepend>
+                <q-icon name="lock" />
+              </template>
+            </q-input>
+            <q-input
+              outlined
+              type="password"
+              v-model="confirmPassword"
+              label="Confirmação de Senha"
+            >
+              <template v-slot:prepend>
+                <q-icon name="lock" />
+              </template>
+            </q-input>
+          </q-card-section>
 
-        <q-card-actions align="between">
-          <q-btn square label="Cancelar" v-close-popup class="bg-negative text-white" />
-          <q-btn flat label="Salvar" v-close-popup class="bg-primary text-white" />
-        </q-card-actions>
+          <q-card-actions align="between">
+            <q-btn square label="Cancelar" v-close-popup class="bg-negative text-white" />
+            <q-btn
+              class="bg-primary text-white"
+              flat
+              label="Salvar"
+              :loading="loading"
+              type="submit"
+            />
+          </q-card-actions>
+        </q-form>
       </q-card>
     </q-dialog>
   </div>
@@ -158,7 +239,7 @@ const confirmPassword = ref<string>()
 
 <style scoped>
 .title {
-  background-color: #CDE7EB;
+  background-color: #cde7eb;
   border-radius: 50px;
 }
 </style>

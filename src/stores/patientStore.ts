@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import { api } from "src/boot/axios";
+import type CreatePatientDTO from "src/models/dtos/createPatientDTO";
 import type Patient from "src/models/patient";
 import { ref } from "vue";
 
@@ -8,16 +9,8 @@ export const usePatientStore = defineStore('patient', () => {
 
     const fetchPatients = async () => {
         try {
-
-            const token = localStorage.getItem('token');
-            console.log("Token antes da requisição:", token);  
-            if (token) {
-                console.log("Token antes da requisição:", token);  
-            }
-
             const response = await api.get('/nutritionists/patients');
 
-            console.log('Response' + response.data)
             patients.value = response.data.map((patient: Patient) => ({
                 id: patient.id,
                 username: patient.username,
@@ -33,6 +26,14 @@ export const usePatientStore = defineStore('patient', () => {
         }
     }
 
+    const createPatient = async (data: CreatePatientDTO) => {
+        try {
+            await api.post('/nutritionists/createPatient', data)
+        } catch (error) {
+            console.error('Erro ao criar paciente:', error)
+            throw new Error('Erro no cadastro de paciente');
+        }
+    }
 
-    return { patients, fetchPatients }
+    return { patients, fetchPatients, createPatient }
 })
