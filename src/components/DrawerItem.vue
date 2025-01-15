@@ -1,8 +1,7 @@
 <template>
   <q-item
     clickable
-    tag="a"
-    target="_blank"
+    :to="link"
   >
     <q-item-section
       v-if="icon"
@@ -21,6 +20,7 @@
 export interface DrawerItemProps {
   title: string;
   icon?: string;
+  link?: string;
 };
 
 withDefaults(defineProps<DrawerItemProps>(), {

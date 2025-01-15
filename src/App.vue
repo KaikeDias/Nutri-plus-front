@@ -11,10 +11,8 @@ const router = useRouter()
 const authStore = useAuthStore()
 
 onMounted(() => {
-  if (authStore.token) {
-    router.push('/') // Redireciona para a página inicial autenticada
-  } else {
-    router.push('/login') // Redireciona para login se não estiver autenticado
+  if (authStore.token == null) {
+    router.push('/login') 
   }
 })
 </script>
