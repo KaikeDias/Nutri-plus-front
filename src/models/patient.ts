@@ -4,5 +4,6 @@ export default interface Patient {
     email: string;
     name: string;
     phone: string;
-    cpf: string
+    cpf: string;
+    menuId: string
 }
