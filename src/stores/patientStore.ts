@@ -6,6 +6,7 @@ import { ref } from "vue";
 
 export const usePatientStore = defineStore('patient', () => {
     const patients = ref<Patient[]>([]);
+    const loadedPatient = ref<Patient | null>();
 
     const fetchPatients = async () => {
         try {
@@ -17,10 +18,9 @@ export const usePatientStore = defineStore('patient', () => {
                 email: patient.email,
                 name: patient.name,
                 phone: patient.phone,
-                cpf: patient.cpf
+                cpf: patient.cpf,
+                menuId: patient.menuId
             }))
-            console.log('patients', patients.value)
-
         } catch (error) {
             console.error('Erro ao buscar pacientes:', error)
         }
@@ -53,5 +53,35 @@ export const usePatientStore = defineStore('patient', () => {
         }
     }
 
-    return { patients, fetchPatients, createPatient, deletePatient, editPatient }
+    const loadPatient = async (id: string) => {
+        try {
+            const response = await api.get(`/nutritionists/patients/${id}`);
+            
+            loadedPatient.value = {
+                id: response.data.id,
+                username: response.data.username,
+                email: response.data.email,
+                name: response.data.name,
+                cpf: response.data.cpf,
+                phone: response.data.phone,
+                menuId: response.data.menuID,
+            }
+
+            localStorage.setItem('loadedPatient', JSON.stringify(loadedPatient.value));
+        } catch (error) {
+            console.error('Erro ao carregar paciente:', error)
+            throw new Error('Erro no carregamento de paciente');
+        }
+    }
+
+    const clearPatient = () => {
+        loadedPatient.value = null;
+        localStorage.removeItem('loadedPatient')
+    }
+
+    const getLoadedPatient = async () => {
+        loadedPatient.value = await JSON.parse(localStorage.getItem('loadedPatient')!)
+    }
+
+    return { patients, fetchPatients, createPatient, deletePatient, editPatient, loadPatient, clearPatient, loadedPatient, getLoadedPatient }
 })
