@@ -17,7 +17,6 @@ const { meals } = storeToRefs(mealsStore)
 
 onMounted(async () => {
   const savedPatient = localStorage.getItem('loadedPatient')
-  // console.log(savedPatient)
   loadedPatient.value = await JSON.parse(savedPatient!)
   if (loadedPatient.value) {
     console.log(loadedPatient.value)
