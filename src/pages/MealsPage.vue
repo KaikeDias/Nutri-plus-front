@@ -11,7 +11,7 @@ import { useRouter } from 'vue-router'
 const loadedPatient = ref<Patient | null>()
 
 const mealsStore = useMealsStore()
-const router = useRouter();
+const router = useRouter()
 
 const { meals } = storeToRefs(mealsStore)
 
@@ -35,9 +35,33 @@ const showSubstitutions = (foodId: string) => {
   substitutionsDialog.value = true
 }
 
-
 const editMeal = (meal: Meal) => {
   console.log('Editar refeição:', meal)
+}
+
+const deleteDialog = ref(false)
+const deleteLoading = ref(false)
+const errorMessage = ref<string | null>(null)
+const selectedMeal = ref<Meal>()
+
+const openDeleteDialog = (mealDelete: Meal) => {
+  deleteDialog.value = true
+  selectedMeal.value = mealDelete
+}
+
+const onDelete = async () => {
+  deleteLoading.value = true
+  errorMessage.value = null
+
+  try {
+    await mealsStore.deleteMeal(loadedPatient.value!.menuId, selectedMeal.value!.id)
+    await mealsStore.fetchMeals(loadedPatient.value!.menuId)
+    deleteDialog.value = false
+  } catch (error) {
+    errorMessage.value = (error as Error).message
+  } finally {
+    deleteLoading.value = false
+  }
 }
 </script>
 
@@ -48,13 +72,21 @@ const editMeal = (meal: Meal) => {
     </div>
 
     <div class="q-ma-md">
-      <q-btn color="primary" icon="add" label="Nova Refeição" rounded class="q-mb-md" @click="router.push('/createMeal')"/>
+      <q-btn
+        color="primary"
+        icon="add"
+        label="Nova Refeição"
+        rounded
+        class="q-mb-md"
+        @click="router.push('/createMeal')"
+      />
 
       <MealCard
         v-for="(meal, index) in meals"
         :key="index"
         :meal="meal"
         @edit="editMeal"
+        @delete="openDeleteDialog(meal)"
         @show-substitutions="showSubstitutions"
       />
     </div>
@@ -73,6 +105,28 @@ const editMeal = (meal: Meal) => {
       <div class="row justify-end">
         <q-btn color="negative" label="Fechar" class="" v-close-popup />
       </div>
+    </q-card>
+  </q-dialog>
+
+  <q-dialog v-model="deleteDialog" persistent>
+    <q-card style="width: 500px; max-width: 80vw">
+      <q-card-section class="row justify-center">
+        <div class="text-h6 text-weight-bold">Tem certeza que deseja excluir esta refeição?</div>
+      </q-card-section>
+
+      <hr />
+
+      <q-card-actions align="around">
+        <q-btn square label="Cancelar" v-close-popup class="bg-primary text-white" />
+        <q-btn
+          class="bg-negative text-white"
+          flat
+          label="Deletar"
+          icon="delete"
+          :loading="deleteLoading"
+          @click="onDelete"
+        />
+      </q-card-actions>
     </q-card>
   </q-dialog>
 </template>
