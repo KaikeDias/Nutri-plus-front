@@ -1,16 +1,33 @@
 <script setup lang="ts">
+import type Patient from 'src/models/patient'
+import {  ref } from 'vue'
+import { useRouter } from 'vue-router'
+
+// import { usePatientStore } from 'src/stores/patientStore';
+
+// const patientStore = usePatientStore();
+const router = useRouter()
+
+const loadedPatient = ref<Patient>()
+const savedPatient = localStorage.getItem('loadedPatient')
+loadedPatient.value = JSON.parse(savedPatient!)
+
 function onCardClick() {
   console.log('Card clicado!')
+}
+
+const openMealsPage = () => {
+  router.push('/meals')
 }
 </script>
 
 <template>
   <div class="title q-ma-md text-weight-bold text-black text-h5 q-pa-md text-center">
-    Nome do Paciente
+    {{ loadedPatient?.name }}
   </div>
 
   <div class="q-app q-pa-lg q-gutter-y-lg" style="min-height: 100vh">
-    <q-card elevated clickable class="cursor-pointer q-pa-md" @click="onCardClick">
+    <q-card elevated clickable class="cursor-pointer q-pa-md" @click="openMealsPage">
       <q-card-section class="row justify-between items-center">
         <div class="row items-center">
           <q-icon name="restaurant_menu" size="32px" class="q-mr-md" />

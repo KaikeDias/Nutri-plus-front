@@ -5,6 +5,7 @@ import type Patient from 'src/models/patient'
 // import type EditPatientDTO from 'src/models/dtos/editPatientDTO'
 import { usePatientStore } from 'src/stores/patientStore'
 import { onMounted, ref } from 'vue'
+import { useRouter } from 'vue-router'
 
 const phoneMask = ref('(##) #####-####')
 const cpfMask = ref('###.###.###-##')
@@ -12,8 +13,11 @@ const cpfMask = ref('###.###.###-##')
 const patientStore = usePatientStore()
 const { patients } = storeToRefs(patientStore)
 
+const router = useRouter()
+
 onMounted(() => {
   patientStore.fetchPatients()
+  localStorage.removeItem('loadedPatient')
 })
 
 interface Column {
@@ -62,7 +66,6 @@ const columns: Column[] = [
   },
 ]
 
-
 const addDialog = ref(false)
 const addLoading = ref(false)
 const errorMessage = ref<string | null>(null)
@@ -105,7 +108,7 @@ const deleteDialog = ref(false)
 const deleteLoading = ref(false)
 const deleteErrorMessage = ref<string | null>(null)
 
-const selectedPatient = ref<Patient | null>(null);
+const selectedPatient = ref<Patient | null>(null)
 
 const openDeleteDialog = (patientDelete: Patient) => {
   deleteDialog.value = true
@@ -113,10 +116,10 @@ const openDeleteDialog = (patientDelete: Patient) => {
 }
 
 const onDelete = async (id: string) => {
-  if (!selectedPatient.value) return 
+  if (!selectedPatient.value) return
   deleteErrorMessage.value = null
   deleteLoading.value = true
-  
+
   try {
     await patientStore.deletePatient(id)
     await patientStore.fetchPatients()
@@ -132,32 +135,47 @@ const editDialog = ref(false)
 const editLoading = ref(false)
 const editErrorMessage = ref<string | null>(null)
 
-const selectedEditPatient = ref<Patient | null>(null);
+const selectedEditPatient = ref<Patient | null>(null)
 
 const openEditDialog = (patientEdit: Patient) => {
-  editDialog.value = true;
+  editDialog.value = true
   selectedEditPatient.value = { ...patientEdit }
 }
 
 const handleEditPatient = async (evt: Event) => {
-  evt.preventDefault(); 
-  editErrorMessage.value = null;
-  editLoading.value = true;
+  evt.preventDefault()
+  editErrorMessage.value = null
+  editLoading.value = true
 
   try {
     if (selectedEditPatient.value) {
-      await patientStore.editPatient(selectedEditPatient.value);
-      await patientStore.fetchPatients();
-      editDialog.value = false;
+      await patientStore.editPatient(selectedEditPatient.value)
+      await patientStore.fetchPatients()
+      editDialog.value = false
     }
   } catch (error) {
-    editErrorMessage.value = (error as Error).message;
+    editErrorMessage.value = (error as Error).message
   } finally {
-    editLoading.value = false;
+    editLoading.value = false
   }
-};
+}
 
+const openMenuErrorMessage = ref<string | null>(null)
+const openMenuLoading = ref(false)
 
+const handleLoadPatient = async (id: string) => {
+  openMenuErrorMessage.value = null
+  openMenuLoading.value = true
+
+  try {
+    patientStore.loadPatient(id)
+    router.push('/patientMenu')
+  } catch (error) {
+    openMenuErrorMessage.value = (error as Error).message
+  } finally {
+    openMenuLoading.value = false
+  }
+}
 </script>
 
 <template>
@@ -183,7 +201,7 @@ const handleEditPatient = async (evt: Event) => {
               class="bg-primary q-mr-sm"
               color="white"
               icon="grid_view"
-              @click="onDelete(props.row)"
+              @click="handleLoadPatient(props.row.id)"
               flat
               round
             >
@@ -290,7 +308,12 @@ const handleEditPatient = async (evt: Event) => {
           <hr />
 
           <q-card-section class="q-pt-none q-gutter-y-md">
-            <q-input outlined v-model="selectedEditPatient!.name" label="Nome Completo" class="q-mt-lg">
+            <q-input
+              outlined
+              v-model="selectedEditPatient!.name"
+              label="Nome Completo"
+              class="q-mt-lg"
+            >
               <template v-slot:prepend>
                 <q-icon name="person" />
               </template>
@@ -300,7 +323,12 @@ const handleEditPatient = async (evt: Event) => {
                 <q-icon name="badge" />
               </template>
             </q-input>
-            <q-input outlined v-model="selectedEditPatient!.phone" :mask="phoneMask" label="Celular">
+            <q-input
+              outlined
+              v-model="selectedEditPatient!.phone"
+              :mask="phoneMask"
+              label="Celular"
+            >
               <template v-slot:prepend>
                 <q-icon name="smartphone" />
               </template>
