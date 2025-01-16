@@ -19,6 +19,10 @@ function onCardClick() {
 const openMealsPage = () => {
   router.push('/meals')
 }
+
+const openGuidelinePage = () => {
+  router.push('/guidelines')
+}
 </script>
 
 <template>
@@ -37,11 +41,11 @@ const openMealsPage = () => {
       </q-card-section>
     </q-card>
 
-    <q-card elevated clickable class="cursor-pointer q-pa-md" @click="onCardClick">
+    <q-card elevated clickable class="cursor-pointer q-pa-md" @click="openGuidelinePage">
       <q-card-section class="row justify-between items-center">
         <div class="row items-center">
-          <q-icon name="description" size="32px" class="q-mr-md" />
-          <div class="text-h4">Documentos</div>
+          <q-icon name="assignment" size="32px" class="q-mr-md" />
+          <div class="text-h4">Orientações Nutricionais</div>
         </div>
         <q-icon name="navigate_next" size="32px" class="q-mr-md" />
       </q-card-section>
@@ -50,8 +54,8 @@ const openMealsPage = () => {
     <q-card elevated clickable class="cursor-pointer q-pa-md" @click="onCardClick">
       <q-card-section class="row justify-between items-center">
         <div class="row items-center">
-          <q-icon name="assignment" size="32px" class="q-mr-md" />
-          <div class="text-h4">Orientações Nutricionais</div>
+          <q-icon name="description" size="32px" class="q-mr-md" />
+          <div class="text-h4">Documentos</div>
         </div>
         <q-icon name="navigate_next" size="32px" class="q-mr-md" />
       </q-card-section>
