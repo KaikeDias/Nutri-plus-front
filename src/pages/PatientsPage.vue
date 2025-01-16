@@ -79,6 +79,18 @@ const patient = ref<CreatePatientDTO>({
   password: '',
 })
 
+const openAddDialog = () => {
+  addDialog.value = true
+  patient.value = {
+    name: '',
+    cpf: '',
+    phone: '',
+    username: '',
+    email: '',
+    password: '',
+  }
+}
+
 const confirmPassword = ref<string>('')
 
 function validatePassword(password: string, confirmPassword: string): boolean {
@@ -191,7 +203,7 @@ const handleLoadPatient = async (id: string) => {
         label="Novo Paciente"
         class="q-mb-md"
         rounded
-        @click="addDialog = true"
+        @click="openAddDialog"
       />
 
       <q-table title="Pacientes" :rows="patients" :columns="columns" row-key="name">
