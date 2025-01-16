@@ -168,7 +168,6 @@ const handleLoadPatient = async (id: string) => {
   openMenuLoading.value = true
 
   try {
-    console.log(id)
     patientStore.loadPatient(id)
     router.push('/patientMenu')
   } catch (error) {
