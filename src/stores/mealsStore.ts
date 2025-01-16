@@ -52,5 +52,14 @@ export const useMealsStore = defineStore('meal', () => {
         }
     }
 
-    return { meals, substitutions, fetchMeals, fetchSubstitutions, addMeal }
+    const deleteMeal = async(menuID: string, mealID: string) => {
+        try {
+            await api.delete(`/menus/${menuID}/meals/${mealID}`)
+        } catch (error) {
+            console.error('Erro ao remover refeicao:', error)
+            throw new Error('Erro na remocao de refeicao');
+        }
+    }
+
+    return { meals, substitutions, fetchMeals, fetchSubstitutions, addMeal, deleteMeal }
 }) 
