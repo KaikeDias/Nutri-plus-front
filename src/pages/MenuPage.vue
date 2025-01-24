@@ -23,6 +23,10 @@ const openMealsPage = () => {
 const openGuidelinePage = () => {
   router.push('/guidelines')
 }
+
+const openDocumentsPage = () => {
+  router.push('/documents')
+}
 </script>
 
 <template>
@@ -51,7 +55,7 @@ const openGuidelinePage = () => {
       </q-card-section>
     </q-card>
 
-    <q-card elevated clickable class="cursor-pointer q-pa-md" @click="onCardClick">
+    <q-card elevated clickable class="cursor-pointer q-pa-md" @click="openDocumentsPage">
       <q-card-section class="row justify-between items-center">
         <div class="row items-center">
           <q-icon name="description" size="32px" class="q-mr-md" />
