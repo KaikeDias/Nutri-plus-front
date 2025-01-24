@@ -30,5 +30,26 @@ export const useGuidelineStore = defineStore('guideline', () => {
         }
     }
 
-    return { guidelines, fetchGuidelines, createGuideline }
+    const editGuideline = async (data: Guideline) => {
+        try {
+            await api.put(`/guidelines/${data.id}`, {
+                title: data.title,
+                content: data.content
+            })
+        } catch (error) {
+            console.error('Erro ao editar orientações nutricionais:', error)
+            throw new Error('Erro ao editar orientações nutricionais');
+        }
+    }
+
+    const deleteGuideline = async (id: string) => {
+        try {
+            await api.delete(`/guidelines/${id}`)
+        }catch (error) {
+            console.error('Erro ao deletar orientações nutricionais:', error)
+            throw new Error('Erro ao deletar orientações nutricionais');
+        }
+    }
+
+    return { guidelines, fetchGuidelines, createGuideline, editGuideline, deleteGuideline }
 })
