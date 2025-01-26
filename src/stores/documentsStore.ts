@@ -79,6 +79,29 @@ export const useDocumentsStore = defineStore('document', () => {
         }
     }
 
+    const openDocument = async (documentId: string) => {
+        try {
+            const response = await api.get(`documents/${documentId}`);
+            if (response.data && response.data.fileData) {
+                const file = b64toBlob(response.data.fileData, 'application/pdf');
+    
+                // Cria a URL do objeto
+                const url = window.URL.createObjectURL(file);
+    
+                // Abre o arquivo em uma nova aba
+                window.open(url, '_blank');
+    
+                // Libera a URL após o uso
+                window.URL.revokeObjectURL(url);
+            } else {
+                console.error('Erro: Dados de arquivo não encontrados.');
+            }
+        } catch (error) {
+            console.error('Erro ao abrir o documento:', error);
+        }
+    };
+    
+
     const uploadDocument = async (formData: FormData) => {
         try {
             await api.post('/documents/upload', formData, {
@@ -92,5 +115,14 @@ export const useDocumentsStore = defineStore('document', () => {
         }
     }
 
-    return { documents, fetchDocuments, downloadDocument, uploadDocument }
+    const deleteDocument = async (documentId: string) => {
+        try {
+            await api.delete(`/documents/${documentId}`)
+        }catch (error) {
+            console.error('Erro ao deletar documento:', error)
+            throw new Error('Erro ao deletar documento');
+        }
+    }
+
+    return { documents, fetchDocuments, downloadDocument, uploadDocument, deleteDocument, openDocument }
 })
