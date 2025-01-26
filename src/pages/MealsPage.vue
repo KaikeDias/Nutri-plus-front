@@ -98,7 +98,8 @@ const onDelete = async () => {
       <q-list v-for="(food, index) in substitutions" :key="index" class="q-pa-sm">
         <q-item-section class="q-pa-md bg-white" style="border-radius: 10px">
           <q-item-label class="text-bold text-primary">{{ food.name }}</q-item-label>
-          <q-item-label caption>{{ food.quantity }} {{ food.unit }}</q-item-label>
+          <q-item-label caption>{{ food.homeQuantity }} {{ food.homeUnit }} ({{ food.quantity
+            }}{{ food.unit }})</q-item-label>
         </q-item-section>
       </q-list>
       <div class="row justify-end">

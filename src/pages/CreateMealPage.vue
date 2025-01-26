@@ -20,8 +20,12 @@ const formCreated = ref(false)
 
 const meal = reactive<MealDTO>({
   title: '',
+  mealTime: '',
   aliments: [],
 })
+
+const mealTimeMask = ref('##:##')
+const mealTimeInput = ref('')
 
 const quantity = ref<number>(1)
 
@@ -31,7 +35,9 @@ const createForm = () => {
     meal.aliments.push({
       name: '',
       quantity: '',
-      unit: 'Unidade',
+      unit: '',
+      homeQuantity: '',
+      homeUnit: '',
       substitutions: [],
     })
   }
@@ -44,7 +50,9 @@ const addSubstitute = (foodIndex: number) => {
     const substitute: FoodDTO = {
       name: '',
       quantity: '',
-      unit: 'Unidade',
+      unit: '',
+      homeQuantity: '',
+      homeUnit: '',
       substitutions: [],
     }
 
@@ -58,6 +66,10 @@ const errorMessage = ref<string | null>(null)
 const handleAddMeal = async () => {
   errorMessage.value = null
   addLoading.value = true
+
+  const formattedTime = `${mealTimeInput.value}:00`
+  meal.mealTime = formattedTime
+
   try {
     await mealsStore.addMeal(meal, loadedPatient.value!.menuId)
     router.push('/meals')
@@ -87,6 +99,16 @@ const handleAddMeal = async () => {
           />
         </div>
         <div class="column">
+          <div class="text-bold text-h6">Horário</div>
+          <q-input
+            v-model="mealTimeInput"
+            :mask="mealTimeMask"
+            placeholder="Horário"
+            outlined
+            style="min-width: 100px"
+          />
+        </div>
+        <div class="column">
           <div class="text-bold text-h6">Quantidade de Alimentos</div>
           <q-input v-model.number="quantity" type="number" outlined style="min-width: 100px" />
         </div>
@@ -111,23 +133,44 @@ const handleAddMeal = async () => {
           </div>
 
           <div class="column">
+            <div class="text-bold text-h6">Volume</div>
+            <q-input
+              v-model="food.quantity"
+              placeholder="Volume"
+              type="number"
+              outlined
+              style="max-width: 120px"
+            />
+          </div>
+
+          <div class="column">
+            <div class="text-bold text-h6">Unidade de Medida</div>
+            <q-input
+              v-model="food.unit"
+              outlined
+              style="min-width: 100px"
+              placeholder="Unidade de Medida"
+            />
+          </div>
+
+          <div class="column">
             <div class="text-bold text-h6">Quantidade</div>
             <q-input
               v-model="food.quantity"
               placeholder="Quantidade"
               type="number"
               outlined
-              style="min-width: 100px"
+              style="min-width: 50px"
             />
           </div>
 
           <div class="column">
-            <div class="text-bold text-h6">Unidade de Medida</div>
-            <q-select
+            <div class="text-bold text-h6">Medida Caseira</div>
+            <q-input
               v-model="food.unit"
-              :options="['Unidade', 'g', 'Fatia']"
               outlined
               style="min-width: 150px"
+              placeholder="Medida Caseira"
             />
           </div>
 
@@ -157,23 +200,43 @@ const handleAddMeal = async () => {
               />
             </div>
             <div>
-              <div class="text-bold text-h6">Quantidade</div>
+              <div class="text-bold text-h6">Volume</div>
               <q-input
                 v-model="substitute.quantity"
+                placeholder="Volume"
+                type="number"
+                outlined
+                style="max-width: 120px"
+              />
+            </div>
+            <div>
+              <div class="text-bold text-h6">Unidade de Medida</div>
+              <q-input
+                v-model="substitute.unit"
+                placeholder="Unidade de medida"
+                outlined
+                style="min-width: 150px"
+              />
+            </div>
+
+            <div class="column">
+              <div class="text-bold text-h6">Quantidade</div>
+              <q-input
+                v-model="food.quantity"
                 placeholder="Quantidade"
                 type="number"
                 outlined
                 style="min-width: 100px"
               />
             </div>
-            <div>
-              <div class="text-bold text-h6">Unidade de Medida</div>
-              <q-select
-                v-model="substitute.unit"
-                :options="['Unidade', 'g', 'Fatia']"
-                placeholder="Unidade de medida"
+
+            <div class="column">
+              <div class="text-bold text-h6">Medida Caseira</div>
+              <q-input
+                v-model="food.homeUnit"
                 outlined
                 style="min-width: 150px"
+                placeholder="Medida Caseira"
               />
             </div>
           </div>

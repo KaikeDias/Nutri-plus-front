@@ -16,11 +16,14 @@ export const useMealsStore = defineStore('meal', () => {
             meals.value = response.data.map((meal: Meal) => ({
                 id: meal.id,
                 title: meal.title,
+                mealTime: meal.mealTime,
                 aliments: meal.aliments.map((food: Food) => ({
                     id: food.id,
                     name: food.name,
                     quantity: food.quantity,
-                    unit: food.unit
+                    unit: food.unit,
+                    homeQuantity: food.homeQuantity,
+                    homeUnit: food.homeUnit
                 }))
             }))
         } catch (error) {
@@ -36,14 +39,16 @@ export const useMealsStore = defineStore('meal', () => {
                 id: food.id,
                 name: food.name,
                 quantity: food.quantity,
-                unit: food.unit
+                unit: food.unit,
+                homeQuantity: food.homeQuantity,
+                homeUnit: food.homeUnit
             }))
         } catch (error) {
             console.error('Erro ao buscar substituicoes:', error)
         }
     }
 
-    const addMeal = async(meal: MealDTO, menuId: string) => {
+    const addMeal = async (meal: MealDTO, menuId: string) => {
         try {
             await api.post(`/menus/${menuId}/meals`, meal)
         } catch (error) {
@@ -52,7 +57,7 @@ export const useMealsStore = defineStore('meal', () => {
         }
     }
 
-    const deleteMeal = async(menuID: string, mealID: string) => {
+    const deleteMeal = async (menuID: string, mealID: string) => {
         try {
             await api.delete(`/menus/${menuID}/meals/${mealID}`)
         } catch (error) {

@@ -8,21 +8,37 @@ const emit = defineEmits<{
   (event: 'edit', meal: Meal): void
   (event: 'show-substitutions', foodId: string): void
 }>()
+
+const formatTime = (time: string): string => {
+  return time.slice(0, 5); // Retorna apenas 'hh:mm'
+};
+
 </script>
 
 <template>
   <q-card class="q-pa-md q-mb-md">
     <div class="text-h5 text-center q-mb-md text-bold">{{ meal.title }}</div>
+    <div class="text-subtitle1 text-center q-mb-md text-grey-7">{{ formatTime(meal.mealTime)}}</div>
 
     <q-list bordered separator>
       <q-item v-for="(food, index) in meal.aliments" :key="index" class="q-pa-md">
         <q-item-section>
           <q-item-label class="text-bold">{{ food.name }}</q-item-label>
-          <q-item-label caption>{{ food.quantity }} {{ food.unit }}</q-item-label>
+          <q-item-label caption
+            >{{ food.homeQuantity }} {{ food.homeUnit }} ({{ food.quantity
+            }}{{ food.unit }})</q-item-label
+          >
         </q-item-section>
 
         <q-item-section side>
-          <q-btn outline color="teal" label="Opções de substituição" dense size="sm" @click="emit('show-substitutions', food.id)"  />
+          <q-btn
+            outline
+            color="teal"
+            label="Opções de substituição"
+            dense
+            size="sm"
+            @click="emit('show-substitutions', food.id)"
+          />
         </q-item-section>
       </q-item>
     </q-list>
