@@ -9,7 +9,7 @@ export const useDocumentsStore = defineStore('document', () => {
 
     const fetchDocuments = async (patientId: string) => {
         try {
-            const response = await api.get(`/documents/patient/${patientId}`)
+            const response = await api.get(`/documents/patients/${patientId}`)
 
             documents.value = response.data.map((document: Document) => ({
                 id: document.id,
