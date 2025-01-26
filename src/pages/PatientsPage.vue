@@ -14,11 +14,19 @@ const patientStore = usePatientStore()
 const { patients } = storeToRefs(patientStore)
 
 const router = useRouter()
+const fetchLoading = ref(true);
 
-onMounted(() => {
-  patientStore.fetchPatients()
-  localStorage.removeItem('loadedPatient')
-})
+onMounted(async () => {
+  try {
+    await patientStore.fetchPatients(); // Aguarda o fetch ser concluído
+    localStorage.removeItem('loadedPatient');
+  } catch (error) {
+    console.error("Erro ao buscar pacientes:", error);
+  } finally {
+    fetchLoading.value = false; // Garante que o estado seja atualizado no final
+  }
+});
+
 
 interface Column {
   name: string
@@ -100,12 +108,14 @@ function validatePassword(password: string, confirmPassword: string): boolean {
 const handleRegisterPatient = async () => {
   errorMessage.value = null
   addLoading.value = true
+  fetchLoading.value = true
 
   try {
     if (validatePassword(patient.value.password, confirmPassword.value)) {
       await patientStore.createPatient(patient.value)
       addDialog.value = false
       await patientStore.fetchPatients()
+      fetchLoading.value = false
     } else {
       throw new Error('as senhas sao diferentes')
     }
@@ -131,11 +141,13 @@ const onDelete = async (id: string) => {
   if (!selectedPatient.value) return
   deleteErrorMessage.value = null
   deleteLoading.value = true
+  fetchLoading.value = true
 
   try {
     await patientStore.deletePatient(id)
     await patientStore.fetchPatients()
     deleteDialog.value = false
+    fetchLoading.value = false
   } catch (error) {
     deleteErrorMessage.value = (error as Error).message
   } finally {
@@ -206,7 +218,16 @@ const handleLoadPatient = async (id: string) => {
         @click="openAddDialog"
       />
 
-      <q-table title="Pacientes" :rows="patients" :columns="columns" row-key="name">
+      <q-table
+        title="Pacientes"
+        :rows="patients"
+        :columns="columns"
+        row-key="name"
+        :loading="fetchLoading"
+      >
+        <template #loading>
+          <q-inner-loading showing color="primary" />
+        </template>
         <template v-slot:body-cell-actions="props">
           <q-td :props="props" class="gap-">
             <q-btn
