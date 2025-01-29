@@ -14,6 +14,7 @@ const routes: RouteRecordRaw[] = [
       {path: 'createMeal', component: () => import('pages/CreateMealPage.vue')},
       {path: 'guidelines', component: () => import('pages/GuidelinesPage.vue')},
       {path: 'documents', component: () => import('pages/DocumentsPage.vue')},
+      {path: 'form', component: () => import('pages/FormPage.vue')},
     ],
   },
   {

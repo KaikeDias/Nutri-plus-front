@@ -19,7 +19,8 @@ export const usePatientStore = defineStore('patient', () => {
                 name: patient.name,
                 phone: patient.phone,
                 cpf: patient.cpf,
-                menuId: patient.menuId
+                menuId: patient.menuId,
+                formId: patient.formId
             }))
         } catch (error) {
             console.error('Erro ao buscar pacientes:', error)
@@ -65,6 +66,7 @@ export const usePatientStore = defineStore('patient', () => {
                 cpf: response.data.cpf,
                 phone: response.data.phone,
                 menuId: response.data.menuID,
+                formId: response.data.formID
             }
 
             localStorage.setItem('loadedPatient', JSON.stringify(loadedPatient.value));

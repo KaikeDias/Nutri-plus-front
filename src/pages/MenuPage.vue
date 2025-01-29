@@ -27,6 +27,10 @@ const openGuidelinePage = () => {
 const openDocumentsPage = () => {
   router.push('/documents')
 }
+
+const openFormPage = () => {
+  router.push('/form')
+}
 </script>
 
 <template>
@@ -40,6 +44,16 @@ const openDocumentsPage = () => {
         <div class="row items-center">
           <q-icon name="restaurant_menu" size="32px" class="q-mr-md" />
           <div class="text-h4">Cardápio</div>
+        </div>
+        <q-icon name="navigate_next" size="32px" class="q-mr-md" />
+      </q-card-section>
+    </q-card>
+
+    <q-card elevated clickable class="cursor-pointer q-pa-md" @click="openFormPage">
+      <q-card-section class="row justify-between items-center">
+        <div class="row items-center">
+          <q-icon name="list_alt" size="32px" class="q-mr-md" />
+          <div class="text-h4">Formulário de Anamnese</div>
         </div>
         <q-icon name="navigate_next" size="32px" class="q-mr-md" />
       </q-card-section>
