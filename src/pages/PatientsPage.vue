@@ -272,7 +272,7 @@ const handleLoadPatient = async (id: string) => {
             <div class="text-h5 text-weight-bold">Adicionar Paciente</div>
           </q-card-section>
 
-          <hr />
+          <q-separator />
 
           <q-card-section class="q-pt-none q-gutter-y-md">
             <q-input outlined v-model="patient.name" label="Nome Completo" class="q-mt-lg">
@@ -338,7 +338,7 @@ const handleLoadPatient = async (id: string) => {
             <div class="text-h5 text-weight-bold">Editar Paciente</div>
           </q-card-section>
 
-          <hr />
+          <q-separator />
 
           <q-card-section class="q-pt-none q-gutter-y-md">
             <q-input
@@ -398,7 +398,7 @@ const handleLoadPatient = async (id: string) => {
           <div class="text-h6 text-weight-bold">Tem certeza que deseja excluir este paciente?</div>
         </q-card-section>
 
-        <hr />
+        <q-separator />
 
         <q-card-actions align="around">
           <q-btn square label="Cancelar" v-close-popup class="bg-primary text-white" />

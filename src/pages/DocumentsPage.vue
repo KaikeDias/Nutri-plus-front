@@ -201,7 +201,7 @@ const handleOpenDocument = (selectedDocument: Document) => {
           <div class="text-h6 text-weight-bold">Tem certeza que deseja excluir este documento?</div>
         </q-card-section>
 
-        <hr />
+        <q-separator />
 
         <q-card-actions align="around">
           <q-btn square label="Cancelar" v-close-popup class="bg-primary text-white" />

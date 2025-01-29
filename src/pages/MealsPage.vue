@@ -94,7 +94,7 @@ const onDelete = async () => {
   <q-dialog v-model="substitutionsDialog">
     <q-card style="width: 500px; max-width: 80vw" class="bg-grey-4 q-pa-md">
       <div class="text-h5 text-center q-ma-md text-bold">Substituições:</div>
-      <hr />
+      <q-separator />
       <q-list v-for="(food, index) in substitutions" :key="index" class="q-pa-sm">
         <q-item-section class="q-pa-md bg-white" style="border-radius: 10px">
           <q-item-label class="text-bold text-primary">{{ food.name }}</q-item-label>
@@ -114,7 +114,7 @@ const onDelete = async () => {
         <div class="text-h6 text-weight-bold">Tem certeza que deseja excluir esta refeição?</div>
       </q-card-section>
 
-      <hr />
+      <q-separator />
 
       <q-card-actions align="around">
         <q-btn square label="Cancelar" v-close-popup class="bg-primary text-white" />
