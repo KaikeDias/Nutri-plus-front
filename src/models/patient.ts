@@ -5,5 +5,6 @@ export default interface Patient {
     name: string;
     phone: string;
     cpf: string;
-    menuId: string
+    menuId: string;
+    formId: string;
 }
