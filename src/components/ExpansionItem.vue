@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import type Guideline from 'src/models/guideline'
 
-defineProps<{ guideline: Guideline, addLoading: boolean}>()
+defineProps<{ guideline: Guideline}>()
 
 const emit = defineEmits<{
   (event: 'edit', guideline: Guideline): void
@@ -32,7 +32,6 @@ const emit = defineEmits<{
           flat
           label="Editar"
           icon="edit"
-          :loading="addLoading"
           type="submit"
           @click="emit('edit', guideline)"
         />

@@ -108,7 +108,7 @@ const handleDeleteGuideline = async () => {
   deleteErrorMessage.value = null
 
   try {
-    if(loadedPatient.value) {
+    if (loadedPatient.value) {
       await guidelineStore.deleteGuideline(selectedDeleteGuideline.value.id)
       await guidelineStore.fetchGuidelines(loadedPatient.value.id)
       deleteDialog.value = false
@@ -140,7 +140,6 @@ const handleDeleteGuideline = async () => {
       v-for="(guideline, index) in guidelines"
       :key="index"
       :guideline="guideline"
-      :add-loading="addLoading"
       @edit="openEditDialog(guideline)"
       @delete="openDeleteDialog(guideline)"
     />
@@ -152,7 +151,7 @@ const handleDeleteGuideline = async () => {
             <div class="text-h5 text-weight-bold">Adicionar Orientação Nutricional</div>
           </q-card-section>
 
-          <hr />
+          <q-separator />
           <q-card-section class="q-pt-none q-gutter-y-md">
             <div class="q-mt-lg">
               <div class="text-bold text-h6">Titulo</div>
@@ -190,7 +189,7 @@ const handleDeleteGuideline = async () => {
             <div class="text-h5 text-weight-bold">Editar Orientação Nutricional</div>
           </q-card-section>
 
-          <hr />
+          <q-separator />
           <q-card-section class="q-pt-none q-gutter-y-md">
             <div class="q-mt-lg">
               <div class="text-bold text-h6">Titulo</div>
@@ -223,26 +222,28 @@ const handleDeleteGuideline = async () => {
     </q-dialog>
 
     <q-dialog v-model="deleteDialog" persistent>
-    <q-card style="width: 600px; max-width: 80vw">
-      <q-card-section class="row justify-center">
-        <div class="text-h6 text-weight-bold">Tem certeza que deseja excluir esta orientação nutricional?</div>
-      </q-card-section>
+      <q-card style="width: 600px; max-width: 80vw">
+        <q-card-section class="row justify-center">
+          <div class="text-h6 text-weight-bold">
+            Tem certeza que deseja excluir esta orientação nutricional?
+          </div>
+        </q-card-section>
 
-      <hr />
+        <q-separator />
 
-      <q-card-actions align="around">
-        <q-btn square label="Cancelar" v-close-popup class="bg-primary text-white" />
-        <q-btn
-          class="bg-negative text-white"
-          flat
-          label="Deletar"
-          icon="delete"
-          :loading="deleteLoading"
-          @click="handleDeleteGuideline"
-        />
-      </q-card-actions>
-    </q-card>
-  </q-dialog>
+        <q-card-actions align="around">
+          <q-btn square label="Cancelar" v-close-popup class="bg-primary text-white" />
+          <q-btn
+            class="bg-negative text-white"
+            flat
+            label="Deletar"
+            icon="delete"
+            :loading="deleteLoading"
+            @click="handleDeleteGuideline"
+          />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
   </div>
 </template>
 
