@@ -81,9 +81,9 @@ const login = async () => {
       </q-card-section>
       <q-card-section class="text-center">
         <div class="text-caption">
-          Esqueceu sua senha?
+          <!-- Esqueceu sua senha?
           <router-link to="/recuperar-senha" class="text-blue">Recuperar senha</router-link>
-          <br />
+          <br /> -->
           Ainda não possui uma conta?
           <router-link to="/register" class="text-blue">Cadastre-se</router-link>
         </div>
