@@ -145,8 +145,9 @@ const handleAddMeal = async () => {
 
           <div class="column">
             <div class="text-bold text-h6">Unidade de Medida</div>
-            <q-input
+            <q-select
               v-model="food.unit"
+              :options="['g', 'ml']"
               outlined
               style="min-width: 100px"
               placeholder="Unidade de Medida"
@@ -156,7 +157,7 @@ const handleAddMeal = async () => {
           <div class="column">
             <div class="text-bold text-h6">Quantidade</div>
             <q-input
-              v-model="food.quantity"
+              v-model="food.homeQuantity"
               placeholder="Quantidade"
               type="number"
               outlined
@@ -167,7 +168,7 @@ const handleAddMeal = async () => {
           <div class="column">
             <div class="text-bold text-h6">Medida Caseira</div>
             <q-input
-              v-model="food.unit"
+              v-model="food.homeUnit"
               outlined
               style="min-width: 150px"
               placeholder="Medida Caseira"
@@ -211,9 +212,10 @@ const handleAddMeal = async () => {
             </div>
             <div>
               <div class="text-bold text-h6">Unidade de Medida</div>
-              <q-input
+              <q-select
                 v-model="substitute.unit"
-                placeholder="Unidade de medida"
+                :options="['g', 'ml']"
+                placeholder="Escolha a unidade"
                 outlined
                 style="min-width: 150px"
               />
@@ -222,7 +224,7 @@ const handleAddMeal = async () => {
             <div class="column">
               <div class="text-bold text-h6">Quantidade</div>
               <q-input
-                v-model="food.quantity"
+                v-model="substitute.homeQuantity"
                 placeholder="Quantidade"
                 type="number"
                 outlined
@@ -233,7 +235,7 @@ const handleAddMeal = async () => {
             <div class="column">
               <div class="text-bold text-h6">Medida Caseira</div>
               <q-input
-                v-model="food.homeUnit"
+                v-model="substitute.homeUnit"
                 outlined
                 style="min-width: 150px"
                 placeholder="Medida Caseira"
