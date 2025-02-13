@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type Patient from 'src/models/patient'
-import {  ref } from 'vue'
+import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 
 // import { usePatientStore } from 'src/stores/patientStore';
@@ -11,6 +11,9 @@ const router = useRouter()
 const loadedPatient = ref<Patient>()
 const savedPatient = localStorage.getItem('loadedPatient')
 loadedPatient.value = JSON.parse(savedPatient!)
+
+const waterAmount = ref(0)
+const dialog = ref(false)
 
 function onCardClick() {
   console.log('Card clicado!')
@@ -30,6 +33,10 @@ const openDocumentsPage = () => {
 
 const openFormPage = () => {
   router.push('/form')
+}
+
+const openEntriesPage = () => {
+  router.push('/entries')
 }
 </script>
 
@@ -79,7 +86,7 @@ const openFormPage = () => {
       </q-card-section>
     </q-card>
 
-    <q-card elevated clickable class="cursor-pointer q-pa-md" @click="onCardClick">
+    <q-card elevated clickable class="cursor-pointer q-pa-md" @click="openEntriesPage">
       <q-card-section class="row justify-between items-center">
         <div class="row items-center">
           <q-icon name="free_cancellation" size="32px" class="q-mr-md" />
@@ -99,6 +106,21 @@ const openFormPage = () => {
       </q-card-section>
     </q-card>
   </div>
+
+  <q-dialog v-model="dialog">
+    <q-card class="q-pa-md" style="width: 400px">
+      <q-card-section class="text-h6 text-center">Meta de Consumo de Água</q-card-section>
+
+      <q-card-section>
+        <q-input v-model="waterAmount" outlined label="Quantidade (mL)" type="number" />
+      </q-card-section>
+
+      <q-card-actions align="right">
+        <q-btn flat label="Cancelar" color="negative" v-close-popup />
+        <q-btn flat label="Salvar" color="primary" />
+      </q-card-actions>
+    </q-card>
+  </q-dialog>
 </template>
 
 <style scoped>

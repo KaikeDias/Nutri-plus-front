@@ -52,7 +52,6 @@ const formatTime = (time: string): string => {
         class="q-mr-md"
         @click="emit('delete', meal)"
       />
-      <q-btn color="green" outline icon="edit" label="Editar" @click="emit('edit', meal)" />
     </div>
   </q-card>
 </template>

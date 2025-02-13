@@ -42,13 +42,8 @@ const linksList: DrawerItemProps[] = [
   {
     title: 'Início',
     icon: 'home',
-    link: '/'
-  },
-  {
-    title: 'Pacientes',
-    icon: 'person',
     link: '/patients'
-  },
+  }
 ]
 
 const leftDrawerOpen = ref(false)
